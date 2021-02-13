@@ -11,7 +11,8 @@ const App = () => {
   const signUpPassword = useRef("");
   const signUpPasswordConfirmation = useRef("");
 
-  const domain = "http://localhost:3000";
+  const domain = "https://auth-rails-psql.herokuapp.com";
+  // const domain = "http://localhose:3000";
 
   const setCurrentUser = () => {
     const token = cookie.load("token")
