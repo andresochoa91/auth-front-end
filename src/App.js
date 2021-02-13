@@ -2,9 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 import cookie from 'react-cookies';
 
-function App() {
+const App = () => {
 
-  // const [ logged, setLogged ] = useState(false);
   const [ user, setUser ] = useState(null);
   const loginEmail = useRef("");
   const loginPassword = useRef("");
@@ -12,10 +11,12 @@ function App() {
   const signUpPassword = useRef("");
   const signUpPasswordConfirmation = useRef("");
 
-  const setToken = () => {
-    const token = cookie.load('token')
+  const domain = "http://localhost:3000";
+
+  const setCurrentUser = () => {
+    const token = cookie.load("token")
     if (token) {
-      fetch('http://localhost:3000/current_user', {
+      fetch(`${domain}/current_user`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": token
@@ -26,17 +27,20 @@ function App() {
         if (!data.error) {
           setUser(data.user)
         }
+        console.log(data)
       })
       .catch(console.error);
     }
   };
 
-  useEffect(setToken, []);
+  useEffect(setCurrentUser, []);
 
   const handleSubmitLogin = (event) => {
     event.preventDefault();
-    fetch("http://localhost:3000/login", {
+    fetch(`${domain}/login`, {
       method: "POST",
+      credentials: 'include',
+      mode: 'cors',
       headers: {
         "Content-Type": "application/json"
       },
@@ -45,18 +49,22 @@ function App() {
         password: loginPassword.current.value
       })
     })
-    .then(response => response.json())
-    .then(data => {
-      cookie.save("token", data.token, { path: "/" });
-      setToken();
+    .then(response => {
+      const auth = response.headers.get("authorization")
+      cookie.save("token", auth, { path: "/" });
+      setCurrentUser();
+      return response.json();
     })
+    .then(console.log)
     .catch(console.error);
   };
   
   const handleSubmitSignUp = (event) => {
     event.preventDefault();
-    fetch("http://localhost:3000/signup", {
+    fetch(`${domain}/signup`, {
       method: "POST",
+      credentials: 'include',
+      mode: 'cors',
       headers: {
         "Content-Type": "application/json"
       },
@@ -66,11 +74,13 @@ function App() {
         password_confirmation: signUpPassword.current.value
       })
     })
-    .then(response => response.json())
-    .then(data => {
-      cookie.save("token", data.token, { path: "/" });
-      setToken();
+    .then(response => {
+      const auth = response.headers.get("authorization")
+      cookie.save("token", auth, { path: "/" });
+      setCurrentUser();
+      return response.json();
     })
+    .then(console.log)
     .catch(console.error);
   };
 
@@ -136,6 +146,6 @@ function App() {
       </>
     )
   );
-}
+};
 
 export default App;
