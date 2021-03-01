@@ -11,8 +11,9 @@ const App = () => {
   const signUpPassword = useRef("");
   const signUpPasswordConfirmation = useRef("");
 
-  const domain = "https://auth-rails-psql.herokuapp.com";
-  // const domain = "http://localhose:3000";
+  // const domain = "https://auth-rails-psql.herokuapp.com";
+  const domain = "https://auth-rails-psql-devise.herokuapp.com";
+  // const domain = "http://localhost:3000";  //URL used in development
 
   const setCurrentUser = () => {
     const token = cookie.load("token")
@@ -38,7 +39,8 @@ const App = () => {
 
   const handleSubmitLogin = (event) => {
     event.preventDefault();
-    fetch(`${domain}/login`, {
+    // fetch(`${domain}/login`, {
+    fetch(`${domain}/users/sign_in`, {
       method: "POST",
       credentials: 'include',
       mode: 'cors',
@@ -62,7 +64,8 @@ const App = () => {
   
   const handleSubmitSignUp = (event) => {
     event.preventDefault();
-    fetch(`${domain}/signup`, {
+    fetch(`${domain}/users`, {
+    // fetch(`${domain}/sign_up`, {
       method: "POST",
       credentials: 'include',
       mode: 'cors',
